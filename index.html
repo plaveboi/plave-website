@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLAVE | PLAYER 4 LIFE</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --dark-green: #002200;
+            --black: #050505;
+            --glitch-red: #ff00c1;
+            --glitch-blue: #00fff9;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Antonio', sans-serif;
+            --font-ui: 'Orbitron', sans-serif;
+            --accent: var(--neon-green);
+            --matrix-hover: #ff0000; /* Rot bei Mausberührung */
+        }
+
+        /* --- OS TASKBAR --- */
+        #os-taskbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 30px;
+            background: rgba(0, 40, 0, 0.9); border-bottom: 1px solid var(--accent);
+            z-index: 9500; display: flex; align-items: center; padding: 0 15px;
+            font-family: var(--font-ui); font-size: 10px; color: var(--accent);
+            justify-content: space-between; backdrop-filter: blur(5px);
+        }
+
+        /* --- CORE DECRYPTION --- */
+        #core-event {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 14000; display: none;
+            justify-content: center; align-items: center; text-align: center;
+            flex-direction: column; overflow: hidden;
+        }
+        .laser-beam {
+            position: absolute; width: 100%; height: 2px;
+            background: var(--glitch-red); box-shadow: 0 0 20px var(--glitch-red);
+            animation: laser-sweep 2s infinite;
+        }
+        @keyframes laser-sweep { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 20000; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: var(--neon-green); font-family: var(--font-main); overflow: hidden;
+        }
+        #preloader-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.3; z-index: -1; }
+        .terminal-box { width: 90%; max-width: 400px; text-align: left; border: 1px solid var(--neon-green); padding: 20px; background: rgba(0,0,0,0.9); box-shadow: 0 0 20px var(--dark-green); }
+        .terminal-line { font-size: 0.75rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; width: 0; animation: type 0.1s steps(30) forwards; }
+        @keyframes type { from { width: 0; } to { width: 100%; } }
+        .loader-bar-container { width: 100%; height: 8px; border: 1px solid var(--neon-green); margin-top: 20px; }
+        .loader-fill { height: 100%; width: 0; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); animation: fast-load 3.5s forwards cubic-bezier(0.1, 0.5, 0.5, 1); }
+        @keyframes fast-load { 0% { width: 0; } 100% { width: 100%; } }
+
+        /* --- GLOBAL UI FX --- */
+        * { cursor: none !important; box-sizing: border-box; scroll-behavior: smooth; }
+        
+        #custom-cursor {
+            width: 30px; height: 30px; border: 1px solid var(--accent);
+            position: fixed; pointer-events: none; z-index: 15000;
+            transform: translate(-50%, -50%); border-radius: 50%;
+        }
+        #custom-cursor::after { content: ''; position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: var(--glitch-red); transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 0 0 10px var(--glitch-red); }
+
+        body { background-color: #000; color: var(--accent); font-family: var(--font-main); margin: 0; padding: 0; overflow-x: hidden; }
+        #matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; opacity: 0.25; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.4) 50%); background-size: 100% 4px; pointer-events: none; z-index: 100; opacity: 0.6; }
+
+        /* --- HEADER --- */
+        header {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            position: relative; overflow: hidden; perspective: 2000px;
+            background: #000; border-bottom: 2px solid var(--accent);
+        }
+        
+        /* Video Banner Setup */
+        .hero-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 1; filter: grayscale(1) brightness(0.25) contrast(1.4) sepia(1) hue-rotate(85deg);
+        }
+
+        .hero-content {
+            z-index: 10; text-align: center; padding: 50px 30px;
+            background: rgba(0, 0, 0, 0.85); border: 2px solid var(--accent);
+            box-shadow: 0 0 50px var(--dark-green); display: flex; flex-direction: column; align-items: center;
+            width: 100%; max-width: 900px; transform-style: preserve-3d; transition: transform 0.1s ease-out;
+        }
+
+        .glitch-wrapper { position: relative; margin-bottom: 40px; animation: jitter 0.15s infinite; transition: 0.3s; transform: translateZ(100px); }
+        .glitch-text { font-family: var(--font-header); font-size: clamp(5rem, 22vw, 13rem); font-weight: 700; text-transform: uppercase; letter-spacing: -5px; position: relative; color: var(--accent); margin: 0; line-height: 0.85; transform: scaleY(1.2); }
+        .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; font-family: var(--font-header); opacity: 0.8; }
+        .glitch-text::before { left: 4px; text-shadow: -4px 0 var(--glitch-red); animation: slice-1 2.5s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -4px; text-shadow: 4px 0 var(--glitch-blue); animation: slice-2 2s infinite linear alternate; }
+        
+        @keyframes jitter { 0%, 100% { transform: translate(0); } 33% { transform: translate(-1px, 1px); } 66% { transform: translate(1px, -1px); } }
+        @keyframes slice-1 { 0% { clip-path: inset(20% 0 30% 0); } 50% { clip-path: inset(60% 0 10% 0); } 100% { clip-path: inset(10% 0 80% 0); } }
+
+        .hero-subtitle { font-size: clamp(1rem, 4vw, 1.6rem); letter-spacing: 12px; font-weight: bold; color: #fff; margin-bottom: 40px; text-transform: uppercase; transform: translateZ(50px); }
+        .countdown-container { font-size: clamp(2rem, 10vw, 4.5rem); color: var(--accent); font-weight: bold; text-shadow: 0 0 20px var(--accent); background: rgba(0,0,0,0.5); padding: 30px 50px; border: 1px solid var(--accent); position: relative; transform: translateZ(75px); }
+
+        .btn { margin-top: 40px; padding: 20px 50px; background: transparent; color: var(--accent); border: 1px solid var(--accent); font-size: 1.2rem; text-transform: uppercase; text-decoration: none; transition: 0.3s; font-weight: 900; display: inline-block; position: relative; transform: translateZ(30px); }
+        .btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 40px var(--accent); transform: translateZ(60px) scale(1.05); }
+
+        .section { padding: 100px 20px; max-width: 1100px; margin: 40px auto; opacity: 0; transform: translateY(40px); transition: 1s ease-out; background: rgba(0,10,0,0.4); border: 1px solid rgba(0,255,65,0.2); }
+        .section.visible { opacity: 1; transform: translateY(0); }
+        h2 { font-size: clamp(1.8rem, 6vw, 3rem); border-left: 10px solid var(--accent); padding-left: 20px; margin-bottom: 50px; text-transform: uppercase; display: flex; align-items: center; }
+        .blinking-cursor::after { content: '_'; animation: blink 0.8s infinite; margin-left: 5px; color: var(--accent); }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .promo-flex { display: flex; align-items: center; gap: 60px; flex-wrap: wrap; justify-content: center; }
+        .img-box { width: 100%; max-width: 420px; aspect-ratio: 1/1; border: 2px solid var(--accent); position: relative; overflow: hidden; filter: grayscale(1) sepia(1) hue-rotate(85deg) saturate(2.5); transition: 0.5s; }
+        .img-box:hover { filter: grayscale(0) sepia(0); box-shadow: 0 0 30px var(--accent); transform: scale(1.02); }
+        .img-box::after { content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 20px; background: rgba(0, 255, 65, 0.5); box-shadow: 0 0 15px var(--accent); z-index: 5; opacity: 0; }
+        .img-box:hover::after { animation: scanner-loop 1.5s infinite ease-in-out; opacity: 1; }
+        @keyframes scanner-loop { 0% { top: -10%; } 100% { top: 110%; } }
+
+        .social-box { display: flex; justify-content: center; gap: 30px; margin-top: 50px; flex-wrap: wrap; }
+        .social-box a { color: var(--accent); font-size: 2.8rem; transition: 0.4s; opacity: 0.7; }
+        .social-box a:hover { opacity: 1; transform: scale(1.3) rotate(5deg); text-shadow: 0 0 25px var(--accent); }
+
+        .label-container { text-align: center; margin-top: 120px; padding-top: 60px; border-top: 1px solid rgba(0, 255, 65, 0.1); }
+        .label-logo { width: 200px; filter: brightness(0) invert(1); opacity: 0.8; transition: 0.5s; cursor: cell; }
+
+        footer { text-align: center; padding: 100px 20px; opacity: 0.3; border-top: 1px solid rgba(0, 255, 65, 0.1); font-size: 0.9rem; letter-spacing: 3px; }
+
+        /* --- MOBILE FIXES --- */
+        @media (max-width: 768px) { 
+            .promo-flex { text-align: center; } 
+            .hero-content { padding: 40px 15px; transform: none !important; } /* Statisch auf Mobile */
+            .countdown-container { width: 100%; padding: 25px; } 
+            #custom-cursor { display: none !important; } /* Cursor weg auf Mobile */
+            * { cursor: auto !important; }
+            /* Icons etwas kleiner und in einer Reihe */
+            .social-box { gap: 15px; }
+            .social-box a { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="core-event">
+        <div class="laser-beam"></div>
+        <h1 style="font-family: var(--font-ui); color: var(--accent); z-index: 10;">HIDDEN SYSTEM LAYER UNLOCKED</h1>
+        <p id="core-text" style="color: white; font-family: var(--font-main); padding: 20px; max-width: 600px;"></p>
+        <button class="btn" onclick="closeCore()">RETURN TO CORE</button>
+    </div>
+
+    <div id="os-taskbar">
+        <div><i class="fas fa-terminal"></i> PLAVE_SYSTEM_CORE_V.2.6</div>
+        <div id="os-clock">00:00:00</div>
+    </div>
+
+    <div id="preloader">
+        <canvas id="preloader-canvas"></canvas>
+        <div class="terminal-box">
+            <div class="terminal-line" style="animation-delay: 0.1s;">> BOOTING_SEQUENCE: ACTIVE</div>
+            <div class="terminal-line" style="animation-delay: 0.5s;">> LOADING PLAVE_OS_2026.sys</div>
+            <div class="terminal-line" style="animation-delay: 1.0s;">> DECRYPTING PLAYER_4_LIFE...</div>
+            <div class="terminal-line" style="animation-delay: 1.5s;">> ACCESS GRANTED.</div>
+            <div class="loader-bar-container"><div class="loader-fill"></div></div>
+        </div>
+    </div>
+
+    <div id="custom-cursor"></div>
+    <canvas id="matrix-bg"></canvas>
+    <div class="scanlines"></div>
+
+    <header id="three-d-header">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="banner.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content" id="hero-box">
+            <div class="glitch-wrapper">
+                <h1 class="glitch-text" id="matrix-text" data-text="PLAVE">PLAVE</h1>
+            </div>
+            <p class="hero-subtitle">PLAYER 4 LIFE - 2026</p>
+            <div class="countdown-container">
+                <span id="timer">00:00:00:00</span>
+            </div>
+            <a href="https://payhip.com/Plave/collection/player-4-life-album" target="_blank" class="btn">PRE-ORDER ALBUM</a>
+        </div>
+    </header>
+
+    <section class="section" id="single">
+        <h2 class="blinking-cursor">>> LATEST_SINGLE</h2>
+        <div class="promo-flex">
+            <div class="img-box" style="background: url('single_cover.jpg') no-repeat center center/cover;"></div>
+            <div style="flex: 1; min-width: 280px;">
+                <h3 style="font-size: 2.2rem; margin-top: 0; color: #fff;">MONSTER TRUCK</h3>
+                <p>Available on Spotify, Apple Music and all digital stores.</p>
+                <a href="https://ffm.to/monster-truck-plave" target="_blank" class="btn">Listen Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="album">
+        <h2 class="blinking-cursor">>> THE_ALBUM</h2>
+        <div class="promo-flex">
+            <div class="img-box" style="background: url('cover.jpg') no-repeat center center/cover;"></div>
+            <div style="flex: 1; min-width: 280px;">
+                <h3 style="margin-top: 0; font-size: 2.2rem; color: #fff;">PLAYER 4 LIFE</h3>
+                <p><strong>RELEASE:</strong> June 12, 2026</p>
+                <p style="font-size: 1.3rem; line-height: 1.8; border-left: 5px solid var(--neon-green); padding-left: 20px; margin-top: 25px;">
+                    PLAYER 4 LIFE<br>
+                    a mix of rage & trap<br>
+                    the life of a player with big goals and no limits.
+                </p>
+                <a href="https://payhip.com/Plave/collection/player-4-life-album" target="_blank" class="btn">PRE-ORDER</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="blinking-cursor">>> ARTIST_LOG</h2>
+        <div class="promo-flex" style="flex-direction: row-reverse;">
+            <div class="img-box" style="max-width: 320px; background: url('profil.jpg') no-repeat center center/cover;"></div>
+            <div style="flex: 1; min-width: 280px;">
+                <p><strong>ID: PLAVEBOI</strong></p>
+                <p style="font-size: 1.0rem; line-height: 1.7;">
+                    Plave (Plaveboi) is an up-and-coming rapper with a unique trap sound, pushing his own wave. With PLAYER 4 LIFE, he’s taking everything to the next level, from sound to vision. His style leans into an American-influenced sound, blending modern trap and rage elements. He has already collaborated with SSGKobe — his collective and mindset are defined by one principle: <strong>PLAYER 4 LIFE.</strong>
+                </p>
+                <div class="social-box">
+                    <a href="https://instagram.com/plaveboi" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://open.spotify.com/intl-de/artist/10lVU96uWPDgSbjFu4QvJZ" target="_blank"><i class="fab fa-spotify"></i></a>
+                    <a href="https://music.apple.com/us/artist/plave/1719456963" target="_blank"><i class="fab fa-apple"></i></a>
+                    <a href="https://soundcloud.com/plaveboi" target="_blank"><i class="fab fa-soundcloud"></i></a>
+                    <a href="https://youtube.com/@1plave" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://tiktok.com/@plaveboi" target="_blank"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="label-container">
+            <p style="font-size: 0.9rem; letter-spacing: 4px; color: var(--neon-green); margin-bottom: 30px;">PLAYER 4 LIFE - MUSIC & ENTERTAINMENT</p>
+            <img src="label_logo.png" alt="LABEL LOGO" class="label-logo" id="core-trigger" style="cursor: pointer;">
+        </div>
+    </section>
+
+    <footer>© PLAVE 2026 | ALL RIGHTS RESERVED</footer>
+
+    <script>
+        let currentTheme = 'green';
+        
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('os-clock').innerText = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0') + ":" + now.getSeconds().toString().padStart(2,'0');
+        }
+        setInterval(updateClock, 1000);
+
+        // Theme Toggle (Lila/Grün)
+        const coreEvent = document.getElementById('core-event');
+        document.getElementById('core-trigger').onclick = () => {
+            if(currentTheme === 'green') {
+                coreEvent.style.display = 'flex';
+                let i = 0;
+                const text = "HIDDEN SYSTEM LAYER UNLOCKED. CONVERTING INTERFACE TO PURPLE_MODE.V2... DONE.";
+                const coreText = document.getElementById('core-text');
+                coreText.innerText = "";
+                const typeIt = setInterval(() => {
+                    coreText.innerText += text[i]; i++;
+                    if(i >= text.length) {
+                        clearInterval(typeIt);
+                        setTheme('purple');
+                    }
+                }, 30);
+            } else {
+                setTheme('green');
+                alert("SYSTEM REVERTED TO GREEN_MODE.EXE");
+            }
+        };
+
+        function setTheme(mode) {
+            const root = document.documentElement;
+            if(mode === 'purple') {
+                root.style.setProperty('--neon-green', '#bc00ff');
+                root.style.setProperty('--dark-green', '#2a0044');
+                root.style.setProperty('--accent', '#bc00ff');
+                currentTheme = 'purple';
+            } else {
+                root.style.setProperty('--neon-green', '#00ff41');
+                root.style.setProperty('--dark-green', '#002200');
+                root.style.setProperty('--accent', '#00ff41');
+                currentTheme = 'green';
+            }
+        }
+        function closeCore() { coreEvent.style.display = 'none'; }
+
+        // PLAVE TEXT MATRIX GLITCH (Every 6 Seconds)
+        const plaveText = document.getElementById('matrix-text');
+        const originalText = "PLAVE";
+        const glitchChars = "X01$#!?@%&*";
+        
+        function glitchPlave() {
+            let iterations = 0;
+            const interval = setInterval(() => {
+                plaveText.innerText = originalText.split("").map((letter, index) => {
+                    if(index < iterations) return originalText[index];
+                    return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                }).join("");
+                if(iterations >= originalText.length) clearInterval(interval);
+                iterations += 1/3;
+            }, 60);
+        }
+        setInterval(glitchPlave, 6000);
+
+        // MATRIX LOGIC (With Red Mouse Response)
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        const pCanvas = document.getElementById('preloader-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let width, height, columns, drops;
+        let mouse = { x: -1000, y: -1000 };
+
+        function resize() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = pCanvas.width = width; canvas.height = pCanvas.height = height;
+            columns = Math.floor(width / 20); drops = Array(columns).fill(1);
+        }
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', e => { 
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            if(window.innerWidth > 768) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+                const heroBox = document.getElementById('hero-box');
+                if(heroBox) heroBox.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+        resize();
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, width, height);
+            ctx.font = "15px monospace";
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+            
+            for(let i = 0; i < drops.length; i++) {
+                const x = i * 20; const y = drops[i] * 20;
+                const dist = Math.hypot(x - mouse.x, y - mouse.y);
+                
+                if(dist < 100) {
+                    ctx.fillStyle = "#ff0000"; 
+                } else {
+                    ctx.fillStyle = accentColor;
+                }
+
+                ctx.fillText(glitchChars[Math.floor(Math.random() * glitchChars.length)], x, y);
+                if(y > height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        
+        let preInt = setInterval(() => {
+            pCtx.fillStyle = "rgba(0,0,0,0.1)"; pCtx.fillRect(0,0,width,height);
+            pCtx.fillStyle = "#00FF41";
+            for(let i=0; i<drops.length; i++) { pCtx.fillText(Math.random()>0.5?"1":"0", i*20, drops[i]*20); if(drops[i]*20>height&&Math.random()>0.975)drops[i]=0; drops[i]++; }
+        }, 50);
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                clearInterval(preInt);
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 1000);
+            }, 3000);
+        });
+
+        const target = new Date("June 12, 2026 00:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime(); const diff = target - now;
+            if(diff<0) { document.getElementById("timer").innerHTML="OUT NOW"; return; }
+            const d=Math.floor(diff/(1000*60*60*24)), h=Math.floor((diff%(1000*60*60*24))/(1000*60*60)), m=Math.floor((diff%(1000*60*60))/(1000*60)), s=Math.floor((diff%(1000*60))/1000);
+            document.getElementById("timer").innerHTML=`${d.toString().padStart(2,'0')}:${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }, 1000);
+
+        const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+        document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            if(window.innerWidth > 768) {
+                cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
