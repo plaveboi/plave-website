@@ -130,6 +130,9 @@
         .label-logo { width: 200px; filter: brightness(0) invert(1); opacity: 0.8; transition: 0.5s; cursor: cell; }
 
         footer { text-align: center; padding: 100px 20px; opacity: 0.3; border-top: 1px solid rgba(0, 255, 65, 0.1); font-size: 0.9rem; letter-spacing: 3px; }
+        .footer-links { margin-top: 15px; font-size: 0.7rem; }
+        .footer-links a { color: inherit; text-decoration: none; margin: 0 10px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--accent); }
 
         /* --- MOBILE FIXES --- */
         @media (max-width: 768px) { 
@@ -244,7 +247,13 @@
         </div>
     </section>
 
-    <footer>© PLAVE 2026 | ALL RIGHTS RESERVED</footer>
+    <footer>
+        © PLAVE 2026 | ALL RIGHTS RESERVED
+        <div class="footer-links">
+            <a href="https://imprint.plaveofficial.com" target="_blank">Impressum (Imprint)</a>
+            <a href="https://privacy.plaveofficial.com" target="_blank">Datenschutzerklärung (Privacy Policy)</a>
+        </div>
+    </footer>
 
     <script>
         let currentTheme = 'green';
