@@ -7,18 +7,30 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* --- FONT FACE DEFINITIONS --- */
+        @font-face {
+            font-family: 'Antonio';
+            src: url('Antonio-VariableFont_wght.ttf') format('truetype');
+            font-weight: 100 900;
+        }
+
+        @font-face {
+            font-family: 'Orbitron';
+            src: url('Orbitron-VariableFont_wght.ttf') format('truetype');
+            font-weight: 100 900;
+        }
+
         :root {
             --neon-green: #00ff41;
             --dark-green: #002200;
             --black: #050505;
             --glitch-red: #ff00c1;
             --glitch-blue: #00fff9;
-            /* Lokale Font-Alternativen */
             --font-main: 'Courier New', Courier, monospace;
-            --font-header: 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
-            --font-ui: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            --font-header: 'Antonio', sans-serif;
+            --font-ui: 'Orbitron', sans-serif;
             --accent: var(--neon-green);
-            --matrix-hover: #ff0000;
+            --matrix-hover: #ff0000; /* Rot bei Mausberührung */
         }
 
         /* --- OS TASKBAR --- */
@@ -26,9 +38,8 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 30px;
             background: rgba(0, 40, 0, 0.9); border-bottom: 1px solid var(--accent);
             z-index: 9500; display: flex; align-items: center; padding: 0 15px;
-            font-family: var(--font-ui); font-size: 11px; color: var(--accent);
+            font-family: var(--font-ui); font-size: 10px; color: var(--accent);
             justify-content: space-between; backdrop-filter: blur(5px);
-            letter-spacing: 2px; text-transform: uppercase; font-weight: bold;
         }
 
         /* --- CORE DECRYPTION --- */
@@ -82,6 +93,7 @@
             background: #000; border-bottom: 2px solid var(--accent);
         }
         
+        /* Video Banner Setup */
         .hero-video {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; filter: grayscale(1) brightness(0.25) contrast(1.4) sepia(1) hue-rotate(85deg);
@@ -95,7 +107,7 @@
         }
 
         .glitch-wrapper { position: relative; margin-bottom: 40px; animation: jitter 0.15s infinite; transition: 0.3s; transform: translateZ(100px); }
-        .glitch-text { font-family: var(--font-header); font-size: clamp(5rem, 22vw, 13rem); font-weight: normal; text-transform: uppercase; letter-spacing: -2px; position: relative; color: var(--accent); margin: 0; line-height: 0.85; }
+        .glitch-text { font-family: var(--font-header); font-size: clamp(5rem, 22vw, 13rem); font-weight: 700; text-transform: uppercase; letter-spacing: -5px; position: relative; color: var(--accent); margin: 0; line-height: 0.85; transform: scaleY(1.2); }
         .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; font-family: var(--font-header); opacity: 0.8; }
         .glitch-text::before { left: 4px; text-shadow: -4px 0 var(--glitch-red); animation: slice-1 2.5s infinite linear alternate-reverse; }
         .glitch-text::after { left: -4px; text-shadow: 4px 0 var(--glitch-blue); animation: slice-2 2s infinite linear alternate; }
@@ -103,15 +115,15 @@
         @keyframes jitter { 0%, 100% { transform: translate(0); } 33% { transform: translate(-1px, 1px); } 66% { transform: translate(1px, -1px); } }
         @keyframes slice-1 { 0% { clip-path: inset(20% 0 30% 0); } 50% { clip-path: inset(60% 0 10% 0); } 100% { clip-path: inset(10% 0 80% 0); } }
 
-        .hero-subtitle { font-family: var(--font-ui); font-size: clamp(1rem, 4vw, 1.4rem); letter-spacing: 10px; font-weight: bold; color: #fff; margin-bottom: 40px; text-transform: uppercase; transform: translateZ(50px); }
-        .countdown-container { font-family: var(--font-ui); font-size: clamp(2rem, 10vw, 4.5rem); color: var(--accent); font-weight: bold; text-shadow: 0 0 20px var(--accent); background: rgba(0,0,0,0.5); padding: 30px 50px; border: 1px solid var(--accent); position: relative; transform: translateZ(75px); letter-spacing: 5px; }
+        .hero-subtitle { font-size: clamp(1rem, 4vw, 1.6rem); letter-spacing: 12px; font-weight: bold; color: #fff; margin-bottom: 40px; text-transform: uppercase; transform: translateZ(50px); }
+        .countdown-container { font-size: clamp(2rem, 10vw, 4.5rem); color: var(--accent); font-weight: bold; text-shadow: 0 0 20px var(--accent); background: rgba(0,0,0,0.5); padding: 30px 50px; border: 1px solid var(--accent); position: relative; transform: translateZ(75px); }
 
-        .btn { font-family: var(--font-ui); margin-top: 40px; padding: 20px 50px; background: transparent; color: var(--accent); border: 1px solid var(--accent); font-size: 1.1rem; text-transform: uppercase; text-decoration: none; transition: 0.3s; font-weight: bold; display: inline-block; position: relative; transform: translateZ(30px); letter-spacing: 3px; }
+        .btn { margin-top: 40px; padding: 20px 50px; background: transparent; color: var(--accent); border: 1px solid var(--accent); font-size: 1.2rem; text-transform: uppercase; text-decoration: none; transition: 0.3s; font-weight: 900; display: inline-block; position: relative; transform: translateZ(30px); }
         .btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 40px var(--accent); transform: translateZ(60px) scale(1.05); }
 
         .section { padding: 100px 20px; max-width: 1100px; margin: 40px auto; opacity: 0; transform: translateY(40px); transition: 1s ease-out; background: rgba(0,10,0,0.4); border: 1px solid rgba(0,255,65,0.2); }
         .section.visible { opacity: 1; transform: translateY(0); }
-        h2 { font-family: var(--font-header); font-size: clamp(1.8rem, 6vw, 3rem); border-left: 10px solid var(--accent); padding-left: 20px; margin-bottom: 50px; text-transform: uppercase; display: flex; align-items: center; letter-spacing: 2px; }
+        h2 { font-size: clamp(1.8rem, 6vw, 3rem); border-left: 10px solid var(--accent); padding-left: 20px; margin-bottom: 50px; text-transform: uppercase; display: flex; align-items: center; }
         .blinking-cursor::after { content: '_'; animation: blink 0.8s infinite; margin-left: 5px; color: var(--accent); }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
@@ -129,18 +141,21 @@
         .label-container { text-align: center; margin-top: 120px; padding-top: 60px; border-top: 1px solid rgba(0, 255, 65, 0.1); }
         .label-logo { width: 200px; filter: brightness(0) invert(1); opacity: 0.8; transition: 0.5s; cursor: cell; }
 
-        footer { text-align: center; padding: 100px 20px; opacity: 0.3; border-top: 1px solid rgba(0, 255, 65, 0.1); font-size: 0.9rem; letter-spacing: 3px; font-family: var(--font-ui); }
+        footer { text-align: center; padding: 100px 20px; opacity: 0.3; border-top: 1px solid rgba(0, 255, 65, 0.1); font-size: 0.9rem; letter-spacing: 3px; }
         
+        /* Links im Footer */
         .footer-links { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
         .footer-links a { color: var(--accent); text-decoration: none; font-size: 0.75rem; transition: 0.3s; }
         .footer-links a:hover { opacity: 1; text-shadow: 0 0 10px var(--accent); }
 
+        /* --- MOBILE FIXES --- */
         @media (max-width: 768px) { 
             .promo-flex { text-align: center; } 
-            .hero-content { padding: 40px 15px; transform: none !important; }
-            .countdown-container { width: 100%; padding: 25px; letter-spacing: 2px; } 
-            #custom-cursor { display: none !important; }
+            .hero-content { padding: 40px 15px; transform: none !important; } /* Statisch auf Mobile */
+            .countdown-container { width: 100%; padding: 25px; } 
+            #custom-cursor { display: none !important; } /* Cursor weg auf Mobile */
             * { cursor: auto !important; }
+            /* Icons etwas kleiner und in einer Reihe */
             .social-box { gap: 15px; }
             .social-box a { font-size: 2.2rem; }
         }
@@ -150,7 +165,7 @@
 
     <div id="core-event">
         <div class="laser-beam"></div>
-        <h1 style="font-family: var(--font-ui); color: var(--accent); z-index: 10; letter-spacing: 5px;">HIDDEN SYSTEM LAYER UNLOCKED</h1>
+        <h1 style="font-family: var(--font-ui); color: var(--accent); z-index: 10;">HIDDEN SYSTEM LAYER UNLOCKED</h1>
         <p id="core-text" style="color: white; font-family: var(--font-main); padding: 20px; max-width: 600px;"></p>
         <button class="btn" onclick="closeCore()">RETURN TO CORE</button>
     </div>
@@ -196,7 +211,7 @@
         <div class="promo-flex">
             <div class="img-box" style="background: url('Single_Cover.jpg') no-repeat center center/cover;"></div>
             <div style="flex: 1; min-width: 280px;">
-                <h3 style="font-family: var(--font-header); font-size: 2.2rem; margin-top: 0; color: #fff; letter-spacing: 2px;">MONSTER TRUCK</h3>
+                <h3 style="font-size: 2.2rem; margin-top: 0; color: #fff;">MONSTER TRUCK</h3>
                 <p>Available on Spotify, Apple Music and all digital stores.</p>
                 <a href="https://ffm.to/monster-truck-plave" target="_blank" class="btn">Listen Now</a>
             </div>
@@ -208,7 +223,7 @@
         <div class="promo-flex">
             <div class="img-box" style="background: url('Cover.jpg') no-repeat center center/cover;"></div>
             <div style="flex: 1; min-width: 280px;">
-                <h3 style="font-family: var(--font-header); margin-top: 0; font-size: 2.2rem; color: #fff; letter-spacing: 2px;">PLAYER 4 LIFE</h3>
+                <h3 style="margin-top: 0; font-size: 2.2rem; color: #fff;">PLAYER 4 LIFE</h3>
                 <p><strong>RELEASE:</strong> June 12, 2026</p>
                 <p style="font-size: 1.3rem; line-height: 1.8; border-left: 5px solid var(--neon-green); padding-left: 20px; margin-top: 25px;">
                     PLAYER 4 LIFE<br>
@@ -241,7 +256,7 @@
         </div>
 
         <div class="label-container">
-            <p style="font-family: var(--font-ui); font-size: 0.9rem; letter-spacing: 4px; color: var(--neon-green); margin-bottom: 30px;">PLAYER 4 LIFE - MUSIC & ENTERTAINMENT</p>
+            <p style="font-size: 0.9rem; letter-spacing: 4px; color: var(--neon-green); margin-bottom: 30px;">PLAYER 4 LIFE - MUSIC & ENTERTAINMENT</p>
             <img src="label_logo.png" alt="LABEL LOGO" class="label-logo" id="core-trigger" style="cursor: pointer;">
         </div>
     </section>
@@ -255,7 +270,6 @@
     </footer>
 
     <script>
-        // Der JavaScript Teil bleibt funktional gleich, nutzt nun aber die Variablen
         let currentTheme = 'green';
         
         function updateClock() {
@@ -264,6 +278,7 @@
         }
         setInterval(updateClock, 1000);
 
+        // Theme Toggle (Lila/Grün)
         const coreEvent = document.getElementById('core-event');
         document.getElementById('core-trigger').onclick = () => {
             if(currentTheme === 'green') {
@@ -301,6 +316,7 @@
         }
         function closeCore() { coreEvent.style.display = 'none'; }
 
+        // PLAVE TEXT MATRIX GLITCH (Every 6 Seconds)
         const plaveText = document.getElementById('matrix-text');
         const originalText = "PLAVE";
         const glitchChars = "X01$#!?@%&*";
@@ -318,6 +334,7 @@
         }
         setInterval(glitchPlave, 6000);
 
+        // MATRIX LOGIC (With Red Mouse Response)
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
         const pCanvas = document.getElementById('preloader-canvas');
