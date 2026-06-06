@@ -395,7 +395,7 @@
             }, 3000);
         });
 
-        const target = new Date("June 12, 2026 00:00:00").getTime();
+        const target = new Date("August 21, 2026 00:00:00").getTime();
         setInterval(() => {
             const now = new Date().getTime(); const diff = target - now;
             if(diff<0) { document.getElementById("timer").innerHTML="OUT NOW"; return; }
